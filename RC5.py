@@ -127,7 +127,7 @@ def RC5_string_block_encryptor(block, s, w = 64, r = 18):  # receives STRING, re
     return L, R
 
 
-def RC5_string_block_decryptor(block_encrypted, s, w = 64, r = 18): # receives TUPLE OF INTEGERS, returns STRING
+def RC5_string_block_decryptor(block_encrypted, s, w = 64, r = 18): # receives TUPLE OF INTEGERS, returns TUPLE OF STRINGS
 
     mod = 1 << w
 
