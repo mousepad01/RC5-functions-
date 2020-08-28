@@ -92,7 +92,7 @@ def RC5_key_generator(num_k, w = 64, r = 18, b = 128):
     return s
 
 
-def RC5_block_encryptor(block, s, w = 64, r = 18):
+def RC5_string_block_encryptor(block, s, w = 64, r = 18):  # receives STRING, returns TUPLE OF INTEGERS
 
     mod = 1 << w
     
@@ -105,6 +105,8 @@ def RC5_block_encryptor(block, s, w = 64, r = 18):
 
     L = int(b_block[:w], 2)
     R = int(b_block[w:], 2)
+
+    # execut algoritmul
 
     L += s[0]
     R += s[1]
@@ -125,7 +127,7 @@ def RC5_block_encryptor(block, s, w = 64, r = 18):
     return L, R
 
 
-def RC5_block_decryptor(block_encrypted, s, w = 64, r = 18):
+def RC5_string_block_decryptor(block_encrypted, s, w = 64, r = 18): # receives TUPLE OF INTEGERS, returns STRING
 
     mod = 1 << w
 
@@ -157,6 +159,73 @@ def RC5_block_decryptor(block_encrypted, s, w = 64, r = 18):
 
     return L_str[::-1], R_str[::-1]
 
+
+def RC5_block_encryptor(block, s, w=64, r=18):  # receives INTEGER, returns INTEGER
+
+    mod = 1 << w
+
+    # sparg in cele doua bucati L si R
+
+    R = block & (mod - 1)
+
+    block >>= w
+
+    L = block
+
+    # execut algoritmul
+
+    L += s[0]
+    R += s[1]
+
+    L %= mod
+    R %= mod
+
+    for i in range(1, r):
+        L = rotate_left(L ^ R, R, w)
+        L += s[2 * i]
+        L %= mod
+
+        R = rotate_left(L ^ R, L, w)
+        R += s[2 * i + 1]
+        R %= mod
+
+    return (L << w) | R
+
+
+def RC5_block_decryptor(block_encrypted, s, w=64, r=18):  # receives INTEGER, returns INTEGER
+
+    mod = 1 << w
+
+    R = block_encrypted & (mod - 1)
+
+    block_encrypted >>= w
+
+    L = block_encrypted
+
+    for i in range(r - 1, 0, -1):
+        R = rotate_right((R - s[2 * i + 1]) % mod, L, w) ^ L
+
+        L = rotate_right((L - s[2 * i]) % mod, R, w) ^ R
+
+    R -= s[1]
+    L -= s[0]
+
+    R %= mod
+    L %= mod
+
+    '''R_str = ''
+    L_str = ''
+
+    for i in range(w // 8):
+        L_str += chr(L & 255)
+        R_str += chr(R & 255)
+
+        L >>= 8
+        R >>= 8
+
+    return L_str[::-1] + R_str[::-1]'''
+
+    return (L << w) | R
 
 
 
