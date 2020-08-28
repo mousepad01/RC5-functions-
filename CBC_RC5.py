@@ -7,7 +7,7 @@ def RC5_CBC_encryption(msg, key, block_size = 128, rc5_rounds = 18):
 
     # cipher block chaining, implemented with cipher stealing to manage incomplete blocks
     # explicit initialization vectors are used, so the first block is random
-    # returns array of encrypted blocks, with last two blocks swapped
+    # returns array of encrypted blocks along stolen length, in a tuple
 
     # splitting message into blocks
 
